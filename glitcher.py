@@ -8,8 +8,6 @@ import utils.FileManip as fm
 import utils.Logging as Logging
 
 
-
-
 if __name__ == "__main__":
 	
 	#Set up debug logging...
