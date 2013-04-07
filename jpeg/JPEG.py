@@ -1,6 +1,18 @@
 
 from jpeg.JPEGMarkers import *
+
+
+class JPEG(object):
+	def __init__(self):
+		self.segments = []
+		pass
 	
+	def addSegment(self, segment):
+		self.segments.append(segment)
+		
+	def getSegments(self):
+		return self.segments
+
 class SegmentFactory(object):
 	@staticmethod
 	def getSegment(hexKey,byteArray):
