@@ -19,3 +19,12 @@ class Logger(object):
 		"""
 		if (self.logging):
 			print string
+			
+	def shout(self,string):
+		"""Shout to stdout if logging is enabled.
+		
+		Args:
+			string - what to shout to stdout
+		
+		"""
+		self.log("!!!"+string+"!!!")

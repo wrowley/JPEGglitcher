@@ -53,12 +53,10 @@ if __name__ == "__main__":
 	while(True):
 		#Add the segment to the JPEG
 		theJPEG.addSegment(segment)
-	
-		#this is a pretty crappy and possibly confusing break condition,
-		#basically break if we've found the start of the Huffman stream!
+		
+		#Break loop once we get to the Huffman coding
 		if (segment.__class__ == JPEG.SOSSegment):
-			#(the JPEG.SOSSegment describes but is not the stream, so it is okay that we have absorbed it)
-			debug.log('SOS Segment done and now we can wreck things')
+			debug.shout("BREAKING LOOP AT START OF STREAM")
 			break
 	
 		#grab the next
@@ -68,11 +66,12 @@ if __name__ == "__main__":
 			#if we find '0xff' we have successfully found a new segment
 			segment = JPEG.SegmentFactory.getSegment(ba.nextHexByte(),ba)
 		else:
-			#otherwise i guess quit the loop
+			#otherwise i guess quit the loop and report something
+			debug.shout("After: " + segment.toString()+"")
+			debug.shout("Found: " + byte + "; Expecting 0xff")
+			debug.shout("CURSOR AT 0x" + hex(ba.cursor) +"")
 			break
-		
-		#let's describe the segment we found
-		#debug.log(segment.toString())
+			
 		
 	#Retrieve the segments from the jpeg
 	theSegments = theJPEG.getSegments()
