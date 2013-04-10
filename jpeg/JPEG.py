@@ -17,7 +17,7 @@ class SegmentFactory(object):
 	@staticmethod
 	def getSegment(hexKey,byteArray):
 		if (hexKey == markers['SOI']):
-			return Segment()
+			return Segment() #must do this better
 		elif (markers['APP'].count(hexKey) == 1):
 			return ApplicationSegment(byteArray,int(hexKey[3]))
 		elif (hexKey == markers['DQT'] ):
@@ -26,10 +26,14 @@ class SegmentFactory(object):
 			return SOFSegment(byteArray)
 		elif (hexKey == markers['SOS']):
 			return SOSSegment(byteArray)
+		elif (hexKey == markers['DHT']):
+			return DHTSegment(byteArray)
+		elif (hexKey == markers['DAC']):
+			return MarkerSegment(byteArray) #must do this better
 		elif (hexKey == markers['COM']):
-			return MarkerSegment(byteArray)
+			return MarkerSegment(byteArray) #must do this better
 		elif (hexKey == markers['EOI']):
-			return Segment()
+			return Segment()#must do this better
 		else:
 			print hexKey
 
@@ -61,6 +65,13 @@ class DQTSegment(MarkerSegment):
 class SOFSegment(MarkerSegment):
 	def __init__(self,byteArray):
 		super(SOFSegment,self).__init__(byteArray)
+		
+	def toString(self):
+		return MarkerSegment.toString(self) + ' length -> ' + str(self.length)
+		
+class DHTSegment(MarkerSegment):
+	def __init__(self,byteArray):
+		super(DHTSegment,self).__init__(byteArray)
 		
 	def toString(self):
 		return MarkerSegment.toString(self) + ' length -> ' + str(self.length)
