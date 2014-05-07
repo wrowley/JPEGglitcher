@@ -25,17 +25,18 @@ def main(
 	theJPEG = JPEG.JPEG(jpegfile)
 
 	# Retrieve the segments from the jpeg
-	theSegments = theJPEG.getSegments()
+	theSegments = theJPEG.get_segments()
 
 	# Tell everyone what the jpeg looks like
 	logging.info('--The jpeg looks like this inside!--')
 	for segment in theSegments:
-		logging.info(segment.toString())
+		logging.info(str(segment))
 		if isinstance(segment, JPEG.SOSSegment):
 			huffman_segment = segment
 
-	ba_out        = theJPEG.get_byte_array_clone()
-	ba_out.cursor = huffman_segment.get_offset() + huffman_segment.get_length()
+	# This clones the byte array, and the cursor should be sitting at the start
+	# of the huffman segment
+	ba_out = theJPEG.get_byte_array_clone()
 
 	## The following is a fairly ad-hoc and actually pretty troublesome way of ruining the Huffman stream
 	## It is troublesome because it will (probably) result in the stream containing codes from the Huffman table
@@ -48,9 +49,9 @@ def main(
 	# Point the cursor to the start of the stream
 	logging.info('--Destroying the Huffman coding sequence--')
 	logging.info('Updating output cursor so we can start writing bytes')
-	for i in range(ba_out.cursor,ba_out.size):
+	for i in range(ba_out.get_cursor(), ba_out.get_size()):
 		if (random.randrange(0,(timesWritten+1)*num-(num-2)) == 0):
-			logging.info('Writing random byte at location ' + hex(ba_out.cursor))
+			logging.info('Writing random byte at location ' + hex(ba_out.get_cursor()))
 			ba_out.writeNextByte(random.randrange(0,255))
 			timesWritten+=1
 		else:
@@ -59,7 +60,7 @@ def main(
 	#Write the file out somewhere sensible
 	logging.info('--Attempting to write the file out--')
 	out_file = open(jpegfileout, "wb")
-	out_file.write(ba_out.buf)
+	out_file.write(ba_out.get_buf())
 	logging.info('Written successfully to ' + jpegfileout + '\n')
 	out_file.close()
 

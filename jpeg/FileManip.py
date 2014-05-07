@@ -4,9 +4,16 @@ import array as arr
 class ByteArray(object):
 	def __init__(self):
 		"""A ByteArray, Java-style, except that I like using it."""
-		self.size = 0
-		self.buf = arr.array('B')
-		self.cursor = 0
+		self._size = 0
+		self._buf = arr.array('B')
+		self._cursor = 0
+
+	def get_size(self):
+		return self._size
+	def get_buf(self):
+		return self._buf
+	def get_cursor(self):
+		return self._cursor
 
 	def absorbFile(self,filePath):
 		"""Read the contents of a file into the ByteArray
@@ -15,19 +22,25 @@ class ByteArray(object):
 			filePath - path to the file in the filesystem
 
 		"""
-		self.cursor = 0
+		self._cursor = 0
 		in_file = open(filePath, "rb")
-		self.buf = arr.array('B',in_file.read())
+		self._buf = arr.array('B',in_file.read())
 		in_file.close()
-		self.size = len(self.buf)
+		self._size = len(self._buf)
 
 	def getBytesAt(self, offset, num_bytes):
 		"""Get the bytes at the specified offset
 		"""
-		return self.buf[offset:offset+num_bytes]
+		return self._buf[offset:offset+num_bytes]
+
+	def byteAt(self, offset):
+		"""Grab a 'byte' i.e. 8-bit uint from the array at the specified offset
+		"""
+		bts = self.getBytesAt(offset, 1)
+		return bts[0]
 
 	def shortAt(self, offset):
-		"""Grab a 'short' i.e. 16-bit uint from the array at the speified offset
+		"""Grab a 'short' i.e. 16-bit uint from the array at the specified offset
 		"""
 		bts = self.getBytesAt(offset, 2)
 		return ((bts[0] << 8) + bts[1])
@@ -42,9 +55,9 @@ class ByteArray(object):
 		"""Grab the next byte from the file.
 		Moves cursor forward by 1.
 		"""
-		if (self.cursor <= self.size):
-			byte = self.buf[self.cursor]
-			self.cursor = self.cursor + 1
+		if (self._cursor <= self._size):
+			byte = self._buf[self._cursor]
+			self._cursor = self._cursor + 1
 		else:
 			byte = 0
 		return byte
@@ -83,8 +96,8 @@ class ByteArray(object):
 			byte - byte to insert into the stream
 
 		"""
-		self.buf[self.cursor] = byte
-		self.cursor += 1
+		self._buf[self._cursor] = byte
+		self._cursor += 1
 
 	def moveCursor(self, N):
 		"""Moves cursor forward by N
@@ -93,8 +106,8 @@ class ByteArray(object):
 			N - integer to move the cursor forward by (may be negative to move cursor backwards)
 
 		"""
-#		logging.info("Cursor was at " + str(self.cursor))
-		self.cursor += N
-#		logging.info("Cursor now at " + str(self.cursor))
+#		logging.info("Cursor was at " + str(self._cursor))
+		self._cursor += N
+#		logging.info("Cursor now at " + str(self._cursor))
 
 
